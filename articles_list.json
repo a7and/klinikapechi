@@ -1,0 +1,92 @@
+{
+  "total": 4,
+  "lastUpdated": "2026-02-08T16:48:06.922Z",
+  "articles": [
+    {
+      "id": 1,
+      "slug": "kogda-pech-s-uma-svodit",
+      "title": "Когда печь с ума сводит или «День сурка»",
+      "description": "Ремонт кирпичной печи, которая дымит и не греет. История реанимации печи из жизни.",
+      "thumbnail": "/articles/2025/kogda-pech-s-uma-svodit/images/head.png",
+      "alt": "Изображение к статье «День сурка»",
+      "folder": "2025/kogda-pech-s-uma-svodit",
+      "path": "/article/2025/kogda-pech-s-uma-svodit/",
+      "date": "2025-02-08",
+      "author": "Андрей Захарченко",
+      "category": "ремонт",
+      "keywords": [
+        "ремонт печи",
+        "дымит печь",
+        "день сурка",
+        "кирпичная печь"
+      ]
+    },
+    {
+      "id": 4,
+      "slug": "pochemu-diagnostika-vazhnee-remonta",
+      "title": "Почему диагностика печи важнее срочного ремонта",
+      "description": "История о том, как пренебрежение диагностикой привело к критической ситуации. Почему проверка тяги перед началом отопительного сезона спасает от беды.",
+      "thumbnail": "/articles/2025/pochemu-diagnostika-vazhnee-remonta/images/head.png",
+      "alt": "Диагностика печи перед началом отопительного сезона",
+      "folder": "2025/pochemu-diagnostika-vazhnee-remonta",
+      "path": "/article/2025/pochemu-diagnostika-vazhnee-remonta/",
+      "date": "2025-02-08",
+      "author": "Андрей Захарченко",
+      "category": "диагностика",
+      "keywords": [
+        "диагностика печи",
+        "проверка тяги",
+        "начало отопительного сезона",
+        "дым в доме",
+        "ремонт печи",
+        "чистка дымохода",
+        "безопасность печи",
+        "профилактика печи",
+        "когда чистить дымоход"
+      ]
+    },
+    {
+      "id": 2,
+      "slug": "proklyatie-staro-masters",
+      "title": "«Проклятие» старого мастера",
+      "description": "Был я однажды в гостях у одной женщины. Теперь её уже нет в живых...",
+      "thumbnail": "/articles/2025/proklyatie-staro-masters/images/head.png",
+      "alt": "Изображение к статье о проклятии",
+      "folder": "2025/proklyatie-staro-masters",
+      "path": "/article/2025/proklyatie-staro-masters/",
+      "date": "2025-02-08",
+      "author": "Андрей Захарченко",
+      "category": "ремонт",
+      "keywords": [
+        "проклятие",
+        "старый мастер",
+        "печь дымит",
+        "тяга"
+      ]
+    },
+    {
+      "id": 3,
+      "slug": "kak-ya-sdelal-vechnyy-dvigatel",
+      "title": "Как я сделал «вечный двигатель»: ремонт печи в Медвежьегорске",
+      "description": "Реальная история ремонта печи с последовательной конвективной системой. Как перестройка логики печи превратила проблемную конструкцию в эффективный обогреватель.",
+      "thumbnail": "/articles/2025/kak-ya-sdelal-vechnyy-dvigatel/images/head.png",
+      "alt": "Ремонт печи в Медвежьегорске — до и после",
+      "folder": "2025/vechnyy-dvigatel",
+      "path": "/article/2025/vechnyy-dvigatel/",
+      "date": "2025-02-08",
+      "author": "Андрей Захарченко",
+      "category": "ремонт",
+      "keywords": [
+        "ремонт печи",
+        "дымит печь",
+        "тяга в печи",
+        "последовательная конвективная система",
+        "колпаковая печь",
+        "чистка дымохода",
+        "восстановление печи",
+        "ремонт без сноса",
+        "Медвежьегорск"
+      ]
+    }
+  ]
+}

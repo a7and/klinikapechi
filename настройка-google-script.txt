@@ -1,0 +1,89 @@
+========================================
+ПОЛНАЯ ИНСТРУКЦИЯ ПО НАСТРОЙКЕ GOOGLE APPS SCRIPT
+========================================
+
+1. СОЗДАЙ ТАБЛИЦУ В GOOGLE SHEETS
+   - Открой: https://sheets.google.com
+   - Создай новую таблицу → "Заявки Клиника Печей"
+   - В первой строке создай ЗАГОЛОВКИ (точно как ниже):
+     
+     | A (ID) | B (Дата обращения) | C (Описание проблемы) | D (Фото проблемы) | E (Местоположение) | F (ФИО) | G (Контакты) |
+     
+   - Сохрани таблицу
+
+2. ОТКРОЙ РЕДАКТОР SCRIPTS
+   - В таблице: меню "Расширения" → "Apps Script"
+   - Удали весь код и вставь ЭТОТ:
+
+========================================
+КОД ДЛЯ GOOGLE APPS SCRIPT (ВСТАВЬ ТОЧНО ТАК):
+========================================
+
+function doPost(e) {
+  try {
+    // Получаем данные из запроса
+    var jsonString = e.postData.contents;
+    var data = JSON.parse(jsonString);
+    
+    // Получаем активную таблицу
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    
+    // Добавляем новую строку с данными
+    sheet.appendRow([
+      Utilities.getUuid(),                    // ID
+      new Date(),                             // Дата обращения
+      data.problem || '',                     // Описание проблемы
+      data.photoUrl || '',                    // Фото проблемы
+      data.address || '',                     // Местоположение
+      data.name || '',                        // ФИО
+      data.contacts || ''                     // Контакты
+    ]);
+    
+    // Возвращаем успешный ответ
+    return ContentService.createTextOutput(JSON.stringify({
+      result: 'success',
+      message: 'Заявка получена'
+    }))
+    .setMimeType(ContentService.MimeType.JSON);
+    
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({
+      result: 'error',
+      message: error.toString()
+    }))
+    .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+========================================
+3. НАСТРОЙКА ДОСТУПА (ОЧЕНЬ ВАЖНО!):
+   - Нажми кнопку "Развернуть" (Deploy) → "Новое развертывание"
+   - Тип: "Веб-приложение"
+   - Выполнять от имени: "Я" (твой аккаунт)
+   - Кто имеет доступ: "Любой, даже анонимный"
+   - Нажми "Развернуть"
+   - СКОПИРУЙ полученный URL (начинается с "https://script.google.com/macros/s/.../exec")
+
+4. ВСТАВЬ URL В SCRIPT.JS:
+   - Открой файл D:\OSPanel\domains\klinikapechi\script.js
+   - Найди строку: 
+        const scriptUrl = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
+   - ЗАМЕНИ на твой реальный URL, например:
+        const scriptUrl = "https://script.google.com/macros/s/AKfycbyZT2RfZ7d2ie5fEqtjFks9He21h4auLCmUBf0_htXqQyAqtMB0cpNhx2g8ydM3oAFNlw/exec";
+
+5. ПРОВЕРЬ РАБОТОСПОСОБНОСТЬ:
+   - Открой сайт
+   - Нажми "Вызвать мастера"
+   - Заполни форму (обязательно имя, адрес, проблема, контакты)
+   - Прикрепи фото (или вставь ссылку)
+   - Нажми "Отправить заявку"
+   - Через 2-3 секунды должно появиться "✅ Заявка отправлена!"
+   - Проверь таблицу Google — должна появиться новая строка
+
+========================================
+ЕСЛИ НЕ РАБОТАЕТ:
+   - Убедись, что в настройках скрипта стоит "Любой, даже анонимный"
+   - Проверь, что таблица сохранена и открыта
+   - В консоли браузера (F12) посмотри ошибки сети (вкладка Network)
+   - Первый запуск может потребовать подтверждения доступа — открой скрипт в новой вкладке и разреши доступ
+========================================

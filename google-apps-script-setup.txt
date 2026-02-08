@@ -1,0 +1,72 @@
+﻿========================================
+НАСТРОЙКА GOOGLE APPS SCRIPT ДЛЯ ЗАЯВОК
+========================================
+
+1. СОЗДАЙ ТАБЛИЦУ В GOOGLE SHEETS
+   - Открой https://sheets.google.com
+   - Создай новую таблицу
+   - Назови: "Заявки Клиника Печей"
+   - В первой строке создай заголовки:
+     A1: Время
+     B1: Имя
+     C1: Адрес
+     D1: Проблема
+     E1: Фото URL
+     F1: Контакты
+     G1: Страница
+
+2. ОТКРОЙ РЕДАКТОР SCRIPTS
+   - В таблице: Расширения → Apps Script
+   - Удали весь код и вставь этот:
+
+========================================
+КОД ДЛЯ GOOGLE APPS SCRIPT:
+========================================
+
+function doPost(e) {
+  try {
+    // Получаем данные из запроса
+    var data = JSON.parse(e.postData.contents);
+    
+    // Получаем активную таблицу
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    
+    // Добавляем новую строку
+    sheet.appendRow([
+      new Date(),
+      data.name || '',
+      data.address || '',
+      data.problem || '',
+      data.photoUrl || '',
+      data.contacts || '',
+      data.page || ''
+    ]);
+    
+    // Возвращаем успешный ответ
+    return ContentService.createTextOutput(JSON.stringify({
+      result: 'success',
+      message: 'Заявка получена'
+    })).setMimeType(ContentService.MimeType.JSON);
+    
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({
+      result: 'error',
+      message: error.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+========================================
+3. НАСТРОЙКА ДОСТУПА:
+   - Нажми "Развернуть" → "Новое развертывание"
+   - Выбери тип: "Веб-приложение"
+   - Кто имеет доступ: "Любой, даже анонимный"
+   - Нажми "Развернуть"
+   - Скопируй полученный URL (начинается с "https://script.google.com/macros/s/...")
+
+4. ОБНОВИ SCRIPT.JS:
+   - Замени URL в строке:
+     const scriptUrl = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
+   - На твой реальный URL
+
+========================================
