@@ -1,44 +1,13 @@
-﻿# OS generated files
-Thumbs.db
-.DS_Store
-
-# Logs
-*.log
-
-# OSPanel / локальный сервер
+﻿# OSPanel / локальный сервер
+/access_logs/
+/error_logs/
 /.idea/
 /.vscode/
 /node_modules/
-/npm-debug.log*
-/yarn-debug.log*
-/yarn-error.log*
 
-# Build artifacts
-/dist/
-/build/
-/out/
-/bin/
-/obj/
-
-# Temporary files
+# Системные файлы
+Thumbs.db
+.DS_Store
+*.log
 *.tmp
-*.temp
 *~
-
-# Backup files
-*.bak
-*.backup
-
-# IDE specific files
-/.vs/
-/.vscode/
-/.idea/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# OSPanel specific
-/access_logs/
-/error_logs/
