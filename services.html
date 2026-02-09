@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<base href="klinikapechi/">
+<base href="/klinikapechi/">
+
     
     <script>
-// Динамически устанавливаем <base href> в зависимости от среды
+/ Динамически устанавливаем <base href> в зависимости от среды
 (function() {
     var basePath = '';
-    // GitHub Pages
+    / GitHub Pages
     if (window.location.hostname === 'a7and.github.io') {
         basePath = '/klinikapechi';
     } 
-    // Удалённый сервер в папке /klinikapechi/
+    / Удалённый сервер в папке /klinikapechi/
     else if (window.location.pathname.indexOf('/klinikapechi/') === 0) {
         basePath = '/klinikapechi';
     }
-    // Создаём и вставляем элемент <base>
+    / Создаём и вставляем элемент <base>
     var base = document.createElement('base');
     base.href = basePath + '/';
     document.head.insertBefore(base, document.head.firstChild);
@@ -40,21 +41,22 @@
         <!-- Шапка сайта -->
         <!-- Шапка сайта -->
     <header class="header">
-<base href="klinikapechi/">
+<base href="/klinikapechi/">
+
     
     <script>
-// Динамически устанавливаем <base href> в зависимости от среды
+/ Динамически устанавливаем <base href> в зависимости от среды
 (function() {
     var basePath = '';
-    // GitHub Pages
+    / GitHub Pages
     if (window.location.hostname === 'a7and.github.io') {
         basePath = '/klinikapechi';
     } 
-    // Удалённый сервер в папке /klinikapechi/
+    / Удалённый сервер в папке /klinikapechi/
     else if (window.location.pathname.indexOf('/klinikapechi/') === 0) {
         basePath = '/klinikapechi';
     }
-    // Создаём и вставляем элемент <base>
+    / Создаём и вставляем элемент <base>
     var base = document.createElement('base');
     base.href = basePath + '/';
     document.head.insertBefore(base, document.head.firstChild);
@@ -306,7 +308,7 @@
                     </div>
                     <small style="display:block;margin-top:8px;font-size:12px;color:#666;">
                         Или вставьте ссылку на изображение:
-                        <input type="url" name="photoUrl" placeholder="https://..." style="width:100%;margin-top:5px;padding:8px;border:1px solid #ddd;border-radius:4px;">
+                        <input type="url" name="photoUrl" placeholder="https:/..." style="width:100%;margin-top:5px;padding:8px;border:1px solid #ddd;border-radius:4px;">
                     </small>
                 </div>
                 
