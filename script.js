@@ -1,7 +1,11 @@
 /**
  * Рабочий скрипт сайта Клиника Печей
- * С абсолютными путями для корректной работы на всех страницах
+ * С автоматическим определением базового пути для GitHub Pages
  */
+
+// Определяем базовый путь в зависимости от хоста
+const isGitHubPages = window.location.hostname === 'a7and.github.io';
+const basePath = isGitHubPages ? '/klinikapechi' : '';
 
 let articlesData = null;
 
@@ -26,11 +30,10 @@ document.addEventListener("DOMContentLoaded", async function() {
     initPhotoPreview();
 });
 
-// Загрузка статей (АБСОЛЮТНЫЙ ПУТЬ)
+// Загрузка статей (с базовым путём)
 async function loadArticlesList() {
     try {
-        // ВСЕГДА загружаем из корня сайта
-        const response = await fetch("/articles_list.json");
+        const response = await fetch(`${basePath}/articles_list.json`);
         if (!response.ok) throw new Error("Не удалось загрузить список статей");
         const data = await response.json();
         articlesData = data.articles || data;
@@ -54,8 +57,8 @@ async function displayLatestArticles() {
     container.innerHTML = latestArticles.map(function(article) {
         return `
             <article class="article-card">
-                <a href="/article/${article.folder}/" class="article-link">
-                    ${article.thumbnail ? `<div class="article-image-wrapper"><img src="${article.thumbnail}" alt="${article.alt || article.title}" class="article-image" onerror="this.parentElement.style.display='none'"></div>` : ""}
+                <a href="${basePath}/article/${article.folder}/" class="article-link">
+                    ${article.thumbnail ? `<div class="article-image-wrapper"><img src="${basePath}${article.thumbnail}" alt="${article.alt || article.title}" class="article-image" onerror="this.parentElement.style.display='none'"></div>` : ""}
                     <div class="article-info">
                         <h3 class="article-title">${escapeHtml(article.title)}</h3>
                         <p class="article-date">${article.date ? formatDate(article.date) : ""}</p>
@@ -80,13 +83,13 @@ async function displayAllArticles() {
     container.innerHTML = `
         <div class="articles-header">
             <h2>Все статьи (${articlesData.length})</h2>
-            <a href="/" class="btn btn-secondary">← На главную</a>
+            <a href="${basePath}/" class="btn btn-secondary">← На главную</a>
         </div>
         <div class="articles-list">
             ${articlesData.map(function(article) {
                 return `
                     <div class="article-item">
-                        <a href="/article/${article.folder}/" class="article-item-link">
+                        <a href="${basePath}/article/${article.folder}/" class="article-item-link">
                             <div class="article-item-content">
                                 <h3>${escapeHtml(article.title)}</h3>
                                 <div class="article-item-meta">
@@ -95,7 +98,7 @@ async function displayAllArticles() {
                                 </div>
                                 <p class="article-item-desc">${escapeHtml(article.description || "")}</p>
                             </div>
-                            ${article.thumbnail ? `<img src="${article.thumbnail}" alt="${article.alt || article.title}" class="article-item-image" onerror="this.style.display='none'">` : ""}
+                            ${article.thumbnail ? `<img src="${basePath}${article.thumbnail}" alt="${article.alt || article.title}" class="article-item-image" onerror="this.style.display='none'">` : ""}
                         </a>
                     </div>
                 `;
@@ -104,14 +107,12 @@ async function displayAllArticles() {
     `;
 }
 
-// Отображение одной статьи (АБСОЛЮТНЫЙ ПУТЬ + ПРОВЕРКА)
+// Отображение одной статьи
 async function displayArticle() {
     const contentDiv = document.getElementById("article-content");
     if (!contentDiv) return;
     
-    // Если данные ещё не загружены — загрузим
     if (!articlesData || articlesData.length === 0) {
-        console.log("Данные статей не загружены, пытаемся загрузить...");
         articlesData = await loadArticlesList();
     }
     
@@ -125,9 +126,8 @@ async function displayArticle() {
     const articleFolder = pathParts[2];
     const articlePath = year + "/" + articleFolder;
     
-    // Проверяем, что статьи загружены
     if (!articlesData || articlesData.length === 0) {
-        showError("Не удалось загрузить список статей. Попробуйте обновить страницу.");
+        showError("Не удалось загрузить список статей");
         return;
     }
     
@@ -135,14 +135,11 @@ async function displayArticle() {
     
     if (!article) {
         showError("Статья не найдена в списке");
-        console.log("Искали:", articlePath);
-        console.log("Доступные статьи:", articlesData.map(a => a.folder));
         return;
     }
     
     try {
-        // АБСОЛЮТНЫЙ ПУТЬ к контенту статьи
-        const response = await fetch("/articles/" + articlePath + "/content.html");
+        const response = await fetch(`${basePath}/articles/${articlePath}/content.html`);
         if (!response.ok) throw new Error("HTTP " + response.status);
         const htmlContent = await response.text();
         
@@ -158,12 +155,12 @@ async function displayArticle() {
                     ${article.author ? `<span class="article-full-author">Автор: ${escapeHtml(article.author)}</span>` : ""}
                     ${article.category ? `<span class="article-full-category">${escapeHtml(article.category)}</span>` : ""}
                 </div>
-                ${article.thumbnail ? `<div class="article-full-image"><img src="${article.thumbnail}" alt="${article.alt || article.title}" onerror="this.parentElement.style.display='none'"></div>` : ""}
+                ${article.thumbnail ? `<div class="article-full-image"><img src="${basePath}${article.thumbnail}" alt="${article.alt || article.title}" onerror="this.parentElement.style.display='none'"></div>` : ""}
                 <div class="article-full-content">${htmlContent}</div>
             </article>
             <div class="article-navigation">
-                <a href="/" class="btn btn-secondary">← На главную</a>
-                <a href="/articles.html" class="btn btn-secondary">← Все статьи</a>
+                <a href="${basePath}/" class="btn btn-secondary">← На главную</a>
+                <a href="${basePath}/articles.html" class="btn btn-secondary">← Все статьи</a>
             </div>
         `;
     } catch (error) {
