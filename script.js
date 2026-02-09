@@ -1,18 +1,28 @@
 /**
  * Универсальный скрипт сайта Клиника Печей
- * Работает в корне и в любой подпапке
+ * Абсолютные пути + динамическое определение базы для работы везде
  */
 
 let articlesData = null;
 
-// Определяем базовый путь из <base href>
-const baseElement = document.querySelector('base');
-const basePath = baseElement ? baseElement.getAttribute('href') : '/';
+// Динамическое определение базового пути
+const getBasePath = () => {
+    if (window.location.hostname === 'a7and.github.io') {
+        return '/klinikapechi';
+    }
+    const path = window.location.pathname;
+    if (path.includes('/klinikapechi/')) {
+        return '/klinikapechi';
+    }
+    return '';
+};
+
+const basePath = getBasePath();
 
 document.addEventListener("DOMContentLoaded", async function() {
     const pathname = window.location.pathname;
     
-    if (pathname === basePath || pathname === basePath + 'index.html') {
+    if (pathname === basePath + "/" || pathname === basePath + "/index.html") {
         await loadArticlesList();
         await displayLatestArticles();
         initGalleryScroll();
@@ -21,7 +31,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         await loadArticlesList();
         await displayArticle();
     }
-    else if (pathname === basePath + 'articles.html') {
+    else if (pathname === basePath + "/articles.html") {
         await loadArticlesList();
         await displayAllArticles();
     }
@@ -30,10 +40,10 @@ document.addEventListener("DOMContentLoaded", async function() {
     initPhotoPreview();
 });
 
-// Загрузка статей
 async function loadArticlesList() {
     try {
-        const response = await fetch("articles_list.json");
+        const url = basePath + "/articles_list.json";
+        const response = await fetch(url);
         if (!response.ok) throw new Error("Не удалось загрузить список статей");
         const data = await response.json();
         articlesData = data.articles || data;
@@ -44,7 +54,6 @@ async function loadArticlesList() {
     }
 }
 
-// Отображение последних статей
 async function displayLatestArticles() {
     const container = document.getElementById("articles-container");
     if (!container) return;
@@ -55,10 +64,11 @@ async function displayLatestArticles() {
     
     const latestArticles = articlesData.slice(0, 3);
     container.innerHTML = latestArticles.map(function(article) {
+        const thumb = article.thumbnail ? basePath + article.thumbnail : "";
         return `
             <article class="article-card">
-                <a href="article/${article.folder}/" class="article-link">
-                    ${article.thumbnail ? `<div class="article-image-wrapper"><img src="${article.thumbnail}" alt="${article.alt || article.title}" class="article-image" onerror="this.parentElement.style.display='none'"></div>` : ""}
+                <a href="${basePath}/article/${article.folder}/" class="article-link">
+                    ${article.thumbnail ? `<div class="article-image-wrapper"><img src="${thumb}" alt="${article.alt || article.title}" class="article-image" onerror="this.parentElement.style.display='none'"></div>` : ""}
                     <div class="article-info">
                         <h3 class="article-title">${escapeHtml(article.title)}</h3>
                         <p class="article-date">${article.date ? formatDate(article.date) : ""}</p>
@@ -71,7 +81,6 @@ async function displayLatestArticles() {
     }).join("");
 }
 
-// Отображение всех статей
 async function displayAllArticles() {
     const container = document.getElementById("articles-container");
     if (!container) return;
@@ -83,13 +92,14 @@ async function displayAllArticles() {
     container.innerHTML = `
         <div class="articles-header">
             <h2>Все статьи (${articlesData.length})</h2>
-            <a href="./" class="btn btn-secondary">← На главную</a>
+            <a href="${basePath}/" class="btn btn-secondary">← На главную</a>
         </div>
         <div class="articles-list">
             ${articlesData.map(function(article) {
+                const thumb = article.thumbnail ? basePath + article.thumbnail : "";
                 return `
                     <div class="article-item">
-                        <a href="article/${article.folder}/" class="article-item-link">
+                        <a href="${basePath}/article/${article.folder}/" class="article-item-link">
                             <div class="article-item-content">
                                 <h3>${escapeHtml(article.title)}</h3>
                                 <div class="article-item-meta">
@@ -98,7 +108,7 @@ async function displayAllArticles() {
                                 </div>
                                 <p class="article-item-desc">${escapeHtml(article.description || "")}</p>
                             </div>
-                            ${article.thumbnail ? `<img src="${article.thumbnail}" alt="${article.alt || article.title}" class="article-item-image" onerror="this.style.display='none'">` : ""}
+                            ${article.thumbnail ? `<img src="${thumb}" alt="${article.alt || article.title}" class="article-item-image" onerror="this.style.display='none'">` : ""}
                         </a>
                     </div>
                 `;
@@ -107,7 +117,6 @@ async function displayAllArticles() {
     `;
 }
 
-// Отображение одной статьи
 async function displayArticle() {
     const contentDiv = document.getElementById("article-content");
     if (!contentDiv) return;
@@ -117,13 +126,14 @@ async function displayArticle() {
     }
     
     const pathParts = window.location.pathname.split("/").filter(function(p) { return p; });
-    if (pathParts[0] !== "article" || pathParts.length < 3) {
+    const articleIndex = pathParts.indexOf("article");
+    if (articleIndex === -1 || pathParts.length < articleIndex + 3) {
         showError("Статья не найдена");
         return;
     }
     
-    const year = pathParts[1];
-    const articleFolder = pathParts[2];
+    const year = pathParts[articleIndex + 1];
+    const articleFolder = pathParts[articleIndex + 2];
     const articlePath = year + "/" + articleFolder;
     
     if (!articlesData || articlesData.length === 0) {
@@ -139,13 +149,16 @@ async function displayArticle() {
     }
     
     try {
-        const response = await fetch("articles/" + articlePath + "/content.html");
+        const url = basePath + "/articles/" + articlePath + "/content.html";
+        const response = await fetch(url);
         if (!response.ok) throw new Error("HTTP " + response.status);
         const htmlContent = await response.text();
         
         document.title = article.title + " — Клиника Печей";
         var metaDesc = document.querySelector("meta[name='description']");
         if (metaDesc) metaDesc.setAttribute("content", article.description || (article.title + " — Клиника Печей"));
+        
+        const thumb = article.thumbnail ? basePath + article.thumbnail : "";
         
         contentDiv.innerHTML = `
             <article class="article-full">
@@ -155,12 +168,12 @@ async function displayArticle() {
                     ${article.author ? `<span class="article-full-author">Автор: ${escapeHtml(article.author)}</span>` : ""}
                     ${article.category ? `<span class="article-full-category">${escapeHtml(article.category)}</span>` : ""}
                 </div>
-                ${article.thumbnail ? `<div class="article-full-image"><img src="${article.thumbnail}" alt="${article.alt || article.title}" onerror="this.parentElement.style.display='none'"></div>` : ""}
+                ${article.thumbnail ? `<div class="article-full-image"><img src="${thumb}" alt="${article.alt || article.title}" onerror="this.parentElement.style.display='none'"></div>` : ""}
                 <div class="article-full-content">${htmlContent}</div>
             </article>
             <div class="article-navigation">
-                <a href="./" class="btn btn-secondary">← На главную</a>
-                <a href="articles.html" class="btn btn-secondary">← Все статьи</a>
+                <a href="${basePath}/" class="btn btn-secondary">← На главную</a>
+                <a href="${basePath}/articles.html" class="btn btn-secondary">← Все статьи</a>
             </div>
         `;
     } catch (error) {
@@ -168,7 +181,6 @@ async function displayArticle() {
     }
 }
 
-// Вспомогательные функции
 function formatDate(dateString) {
     if (!dateString) return "";
     return new Date(dateString).toLocaleDateString("ru-RU", { year: "numeric", month: "long", day: "numeric" });
@@ -186,7 +198,6 @@ function showError(message) {
     if (container) container.innerHTML = `<div class="error-message">${message}</div>`;
 }
 
-// Модальные окна
 function initModalButtons() {
     var buttons = document.querySelectorAll("[href='#'], .btn-application, .btn-call");
     for (var i = 0; i < buttons.length; i++) {
@@ -231,7 +242,6 @@ function closeApplicationModal() {
     }
 }
 
-// Предпросмотр фото
 function initPhotoPreview() {
     var fileInput = document.getElementById("photoUpload");
     var preview = document.getElementById("photoPreview");
@@ -266,7 +276,6 @@ function initPhotoPreview() {
     }
 }
 
-// Загрузка фото в ImgBB
 async function uploadImageToImgBB(file) {
     var formData = new FormData();
     formData.append("image", file);
@@ -282,7 +291,6 @@ async function uploadImageToImgBB(file) {
     throw new Error((data.error && data.error.message) || "Ошибка загрузки");
 }
 
-// Отправка заявки в Google Sheets
 window.submitApplication = async function(form) {
     event.preventDefault();
     
@@ -359,7 +367,6 @@ window.submitApplication = async function(form) {
     return false;
 };
 
-// Галерея работ
 function initGalleryScroll() {
     var sliderContainer = document.querySelector(".works-slider-container");
     var sliderTrack = document.querySelector(".works-slider-track");
