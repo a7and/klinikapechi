@@ -1,5 +1,5 @@
 /**
- * Простой скрипт с абсолютными путями
+ * Скрипт с относительными путями
  * <base href> обрабатывает все пути автоматически
  */
 
@@ -18,9 +18,9 @@ function formatDate(dateStr) {
     return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear() + ' г.';
 }
 
-// Загрузка статей (абсолютный путь — <base href> обработает)
+// Загрузка статей (относительный путь)
 function loadArticlesList() {
-    return fetch('/articles_list.json')
+    return fetch('articles_list.json')
         .then(function(response) {
             if (!response.ok) throw new Error('HTTP ' + response.status);
             return response.json();
@@ -46,7 +46,7 @@ function displayLatestArticles() {
         var a = window.articlesData[i];
         html += `
             <article class="article-card">
-                <a href="/article/${a.folder}/" class="article-link">
+                <a href="article/${a.folder}/" class="article-link">
                     ${a.thumbnail ? '<div class="article-image-wrapper"><img src="' + a.thumbnail + '" alt="' + (a.alt || a.title) + '" class="article-image"></div>' : ''}
                     <div class="article-info">
                         <h3 class="article-title">${escapeHtml(a.title)}</h3>
@@ -66,13 +66,13 @@ function displayAllArticles() {
     var container = document.getElementById('articles-container');
     if (!container || !window.articlesData || window.articlesData.length === 0) return;
     
-    var html = '<div class="articles-header"><h2>Все статьи (' + window.articlesData.length + ')</h2><a href="/" class="btn btn-secondary">← На главную</a></div><div class="articles-list">';
+    var html = '<div class="articles-header"><h2>Все статьи (' + window.articlesData.length + ')</h2><a href="./" class="btn btn-secondary">← На главную</a></div><div class="articles-list">';
     
     for (var i = 0; i < window.articlesData.length; i++) {
         var a = window.articlesData[i];
         html += `
             <div class="article-item">
-                <a href="/article/${a.folder}/" class="article-item-link">
+                <a href="article/${a.folder}/" class="article-item-link">
                     <div class="article-item-content">
                         <h3>${escapeHtml(a.title)}</h3>
                         <div class="article-item-meta">
@@ -134,8 +134,8 @@ function displayArticle() {
         return;
     }
     
-    // Абсолютный путь — <base href> обработает
-    fetch('/articles/' + path + '/content.html')
+    // Относительный путь
+    fetch('articles/' + path + '/content.html')
     .then(function(response) {
         if (!response.ok) throw new Error('HTTP ' + response.status);
         return response.text();
@@ -155,8 +155,8 @@ function displayArticle() {
                 <div class="article-full-content">${html}</div>
             </article>
             <div class="article-navigation">
-                <a href="/" class="btn btn-secondary">← На главную</a>
-                <a href="/articles.html" class="btn btn-secondary">Все статьи</a>
+                <a href="./" class="btn btn-secondary">← На главную</a>
+                <a href="articles.html" class="btn btn-secondary">Все статьи</a>
             </div>
         `;
     })
@@ -228,9 +228,9 @@ document.addEventListener('DOMContentLoaded', function() {
     loadArticlesList().then(function() {
         var path = window.location.pathname;
         
-        if (path.indexOf('/article/') !== -1 && path !== '/articles.html') {
+        if (path.indexOf('/article/') !== -1 && path !== 'articles.html') {
             displayArticle();
-        } else if (path === '/articles.html') {
+        } else if (path === 'articles.html') {
             displayAllArticles();
         } else {
             displayLatestArticles();
