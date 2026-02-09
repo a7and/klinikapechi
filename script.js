@@ -1,11 +1,28 @@
-// ========================================
-// ПРОСТОЙ И НАДЁЖНЫЙ СКРИПТ
-// Все функции глобальные, без сложной логики
-// ========================================
+/**
+ * Скрипт с правильными путями для работы в подпапке /klinikapechi/
+ */
 
-var articlesData = null;
+// Определяем базовый путь
+const getBasePath = () => {
+    // Если на сервере в папке /klinikapechi/
+    if (window.location.pathname.includes('/klinikapechi/')) {
+        return '/klinikapechi';
+    }
+    // Если на локальном сервере
+    if (window.location.hostname === 'klinikapechi') {
+        return '';
+    }
+    // Если на GitHub Pages
+    if (window.location.hostname === 'a7and.github.io') {
+        return '/klinikapechi';
+    }
+    return '';
+};
 
-// ГЛОБАЛЬНЫЕ ФУНКЦИИ (доступны из HTML)
+const basePath = getBasePath();
+console.log('Базовый путь:', basePath);
+
+// ГЛОБАЛЬНЫЕ ФУНКЦИИ
 function openApplicationModal() {
     var modal = document.getElementById('applicationModal');
     if (modal) {
@@ -47,14 +64,14 @@ function formatDate(dateStr) {
 
 // Загрузка статей
 function loadArticlesList() {
-    return fetch('/articles_list.json')
+    return fetch(basePath + '/articles_list.json')
         .then(function(response) {
             if (!response.ok) throw new Error('Ошибка загрузки');
             return response.json();
         })
         .then(function(data) {
-            articlesData = data.articles || data;
-            return articlesData;
+            window.articlesData = data.articles || data;
+            return window.articlesData;
         })
         .catch(function(error) {
             console.error('Ошибка:', error);
@@ -65,14 +82,14 @@ function loadArticlesList() {
 // Отображение последних статей
 function displayLatestArticles() {
     var container = document.getElementById('articles-container');
-    if (!container || !articlesData || articlesData.length === 0) return;
+    if (!container || !window.articlesData || window.articlesData.length === 0) return;
     
     var html = '';
-    for (var i = 0; i < Math.min(3, articlesData.length); i++) {
-        var a = articlesData[i];
+    for (var i = 0; i < Math.min(3, window.articlesData.length); i++) {
+        var a = window.articlesData[i];
         html += `
             <article class="article-card">
-                <a href="/article/${a.folder}/" class="article-link">
+                <a href="${basePath}/article/${a.folder}/" class="article-link">
                     ${a.thumbnail ? '<div class="article-image-wrapper"><img src="' + a.thumbnail + '" alt="' + (a.alt || a.title) + '" class="article-image"></div>' : ''}
                     <div class="article-info">
                         <h3 class="article-title">${escapeHtml(a.title)}</h3>
@@ -90,15 +107,15 @@ function displayLatestArticles() {
 // Отображение всех статей
 function displayAllArticles() {
     var container = document.getElementById('articles-container');
-    if (!container || !articlesData || articlesData.length === 0) return;
+    if (!container || !window.articlesData || window.articlesData.length === 0) return;
     
-    var html = '<div class="articles-header"><h2>Все статьи (' + articlesData.length + ')</h2><a href="/" class="btn btn-secondary">← На главную</a></div><div class="articles-list">';
+    var html = '<div class="articles-header"><h2>Все статьи (' + window.articlesData.length + ')</h2><a href="' + basePath + '/" class="btn btn-secondary">← На главную</a></div><div class="articles-list">';
     
-    for (var i = 0; i < articlesData.length; i++) {
-        var a = articlesData[i];
+    for (var i = 0; i < window.articlesData.length; i++) {
+        var a = window.articlesData[i];
         html += `
             <div class="article-item">
-                <a href="/article/${a.folder}/" class="article-item-link">
+                <a href="${basePath}/article/${a.folder}/" class="article-item-link">
                     <div class="article-item-content">
                         <h3>${escapeHtml(a.title)}</h3>
                         <div class="article-item-meta">
@@ -142,9 +159,9 @@ function displayArticle() {
     
     var path = parts[idx + 1] + '/' + parts[idx + 2];
     var article = null;
-    for (var i = 0; i < articlesData.length; i++) {
-        if (articlesData[i].folder === path) {
-            article = articlesData[i];
+    for (var i = 0; i < window.articlesData.length; i++) {
+        if (window.articlesData[i].folder === path) {
+            article = window.articlesData[i];
             break;
         }
     }
@@ -155,7 +172,7 @@ function displayArticle() {
     }
     
     // Загружаем контент
-    fetch('/articles/' + path + '/content.html')
+    fetch(basePath + '/articles/' + path + '/content.html')
         .then(function(response) {
             if (!response.ok) throw new Error('Ошибка загрузки контента');
             return response.text();
@@ -175,8 +192,8 @@ function displayArticle() {
                     <div class="article-full-content">${html}</div>
                 </article>
                 <div class="article-navigation">
-                    <a href="/" class="btn btn-secondary">← На главную</a>
-                    <a href="/articles.html" class="btn btn-secondary">Все статьи</a>
+                    <a href="${basePath}/" class="btn btn-secondary">← На главную</a>
+                    <a href="${basePath}/articles.html" class="btn btn-secondary">Все статьи</a>
                 </div>
             `;
         })
@@ -223,9 +240,9 @@ document.addEventListener('DOMContentLoaded', function() {
     loadArticlesList().then(function() {
         var path = window.location.pathname;
         
-        if (path.includes('/article/') && path !== '/articles.html') {
+        if (path.includes('/article/') && path !== basePath + '/articles.html') {
             displayArticle();
-        } else if (path === '/articles.html') {
+        } else if (path === basePath + '/articles.html') {
             displayAllArticles();
         } else {
             displayLatestArticles();
