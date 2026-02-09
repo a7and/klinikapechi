@@ -1,6 +1,25 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <script>
+// Динамически устанавливаем <base href> в зависимости от среды
+(function() {
+    var basePath = '';
+    // GitHub Pages
+    if (window.location.hostname === 'a7and.github.io') {
+        basePath = '/klinikapechi';
+    } 
+    // Удалённый сервер в папке /klinikapechi/
+    else if (window.location.pathname.indexOf('/klinikapechi/') === 0) {
+        basePath = '/klinikapechi';
+    }
+    // Создаём и вставляем элемент <base>
+    var base = document.createElement('base');
+    base.href = basePath + '/';
+    document.head.insertBefore(base, document.head.firstChild);
+    console.log('✅ Base href установлен:', basePath + '/');
+})();
+</script>
     
     
     <meta charset="UTF-8">
@@ -21,6 +40,25 @@
         <!-- Шапка сайта -->
         <!-- Шапка сайта -->
     <header class="header">
+    <script>
+// Динамически устанавливаем <base href> в зависимости от среды
+(function() {
+    var basePath = '';
+    // GitHub Pages
+    if (window.location.hostname === 'a7and.github.io') {
+        basePath = '/klinikapechi';
+    } 
+    // Удалённый сервер в папке /klinikapechi/
+    else if (window.location.pathname.indexOf('/klinikapechi/') === 0) {
+        basePath = '/klinikapechi';
+    }
+    // Создаём и вставляем элемент <base>
+    var base = document.createElement('base');
+    base.href = basePath + '/';
+    document.head.insertBefore(base, document.head.firstChild);
+    console.log('✅ Base href установлен:', basePath + '/');
+})();
+</script>
     
     
         <div class="container">
