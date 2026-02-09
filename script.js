@@ -1,6 +1,6 @@
 /**
  * Рабочий скрипт сайта Клиника Печей
- * Статьи + галерея + заявки в Google Sheets
+ * С абсолютными путями для корректной работы на всех страницах
  */
 
 let articlesData = null;
@@ -26,9 +26,10 @@ document.addEventListener("DOMContentLoaded", async function() {
     initPhotoPreview();
 });
 
-// Загрузка статей
+// Загрузка статей (АБСОЛЮТНЫЙ ПУТЬ)
 async function loadArticlesList() {
     try {
+        // ВСЕГДА загружаем из корня сайта
         const response = await fetch("/articles_list.json");
         if (!response.ok) throw new Error("Не удалось загрузить список статей");
         const data = await response.json();
@@ -103,10 +104,16 @@ async function displayAllArticles() {
     `;
 }
 
-// Отображение одной статьи
+// Отображение одной статьи (АБСОЛЮТНЫЙ ПУТЬ + ПРОВЕРКА)
 async function displayArticle() {
     const contentDiv = document.getElementById("article-content");
     if (!contentDiv) return;
+    
+    // Если данные ещё не загружены — загрузим
+    if (!articlesData || articlesData.length === 0) {
+        console.log("Данные статей не загружены, пытаемся загрузить...");
+        articlesData = await loadArticlesList();
+    }
     
     const pathParts = window.location.pathname.split("/").filter(function(p) { return p; });
     if (pathParts[0] !== "article" || pathParts.length < 3) {
@@ -117,14 +124,24 @@ async function displayArticle() {
     const year = pathParts[1];
     const articleFolder = pathParts[2];
     const articlePath = year + "/" + articleFolder;
+    
+    // Проверяем, что статьи загружены
+    if (!articlesData || articlesData.length === 0) {
+        showError("Не удалось загрузить список статей. Попробуйте обновить страницу.");
+        return;
+    }
+    
     const article = articlesData.find(function(a) { return a.folder === articlePath; });
     
     if (!article) {
-        showError("Статья не найдена");
+        showError("Статья не найдена в списке");
+        console.log("Искали:", articlePath);
+        console.log("Доступные статьи:", articlesData.map(a => a.folder));
         return;
     }
     
     try {
+        // АБСОЛЮТНЫЙ ПУТЬ к контенту статьи
         const response = await fetch("/articles/" + articlePath + "/content.html");
         if (!response.ok) throw new Error("HTTP " + response.status);
         const htmlContent = await response.text();
@@ -155,107 +172,7 @@ async function displayArticle() {
 }
 
 // Вспомогательные функции
-
-
-async function displayArticle() {
-    const contentDiv = document.getElementById("article-content");
-    if (!contentDiv) return;
-    
-    const pathParts = window.location.pathname.split("/").filter(function(p) { return p; });
-    if (pathParts[0] !== "article" || pathParts.length < 3) {
-        showError("Статья не найдена");
-        return;
-    }
-    
-    const year = pathParts[1];
-    const articleFolder = pathParts[2];
-    const articlePath = year + "/" + articleFolder;
-    const article = articlesData.find(function(a) { return a.folder === articlePath; });
-    
-    if (!article) {
-        showError("Статья не найдена");
-        return;
-    }
-    
-    try {
-        const response = await fetch("/articles/" + articlePath + "/content.html");
-        if (!response.ok) throw new Error("HTTP " + response.status);
-        const htmlContent = await response.text();
-        
-        document.title = article.title + " — Клиника Печей";
-        var metaDesc = document.querySelector("meta[name='description']");
-        if (metaDesc) metaDesc.setAttribute("content", article.description || (article.title + " — Клиника Печей"));
-        
-        contentDiv.innerHTML = `
-            <article class="article-full">
-                <h1 class="article-full-title">${escapeHtml(article.title)}</h1>
-                <div class="article-full-meta">
-                    ${article.date ? `<span class="article-full-date">${formatDate(article.date)}</span>` : ""}
-                    ${article.author ? `<span class="article-full-author">Автор: ${escapeHtml(article.author)}</span>` : ""}
-                    ${article.category ? `<span class="article-full-category">${escapeHtml(article.category)}</span>` : ""}
-                </div>
-                ${article.thumbnail ? `<div class="article-full-image"><img src="${article.thumbnail}" alt="${article.alt || article.title}" onerror="this.parentElement.style.display='none'"></div>` : ""}
-                <div class="article-full-content">${htmlContent}</div>
-            </article>
-            <div class="article-navigation">
-                <a href="/" class="btn btn-secondary">← На главную</a>
-                <a href="/articles.html" class="btn btn-secondary">← Все статьи</a>
-            </div>
-        `;
-    } catch (error) {
-        showError("Не удалось загрузить статью: " + error.message);
-    }
-}
-displayArticle() {
-    const contentDiv = document.getElementById("article-content");
-    if (!contentDiv) return;
-    
-    const pathParts = window.location.pathname.split("/").filter(function(p) { return p; });
-    if (pathParts[0] !== "article" || pathParts.length < 3) {
-        showError("Статья не найдена");
-        return;
-    }
-    
-    const year = pathParts[1];
-    const articleFolder = pathParts[2];
-    const articlePath = year + "/" + articleFolder;
-    const article = articlesData.find(function(a) { return a.folder === articlePath; });
-    
-    if (!article) {
-        showError("Статья не найдена");
-        return;
-    }
-    
-    try {
-        const response = await fetch("/articles/" + articlePath + "/content.html");
-        if (!response.ok) throw new Error("HTTP " + response.status);
-        const htmlContent = await response.text();
-        
-        document.title = article.title + " — Клиника Печей";
-        var metaDesc = document.querySelector("meta[name='description']");
-        if (metaDesc) metaDesc.setAttribute("content", article.description || (article.title + " — Клиника Печей"));
-        
-        contentDiv.innerHTML = `
-            <article class="article-full">
-                <h1 class="article-full-title">${escapeHtml(article.title)}</h1>
-                <div class="article-full-meta">
-                    ${article.date ? `<span class="article-full-date">${formatDate(article.date)}</span>` : ""}
-                    ${article.author ? `<span class="article-full-author">Автор: ${escapeHtml(article.author)}</span>` : ""}
-                    ${article.category ? `<span class="article-full-category">${escapeHtml(article.category)}</span>` : ""}
-                </div>
-                ${article.thumbnail ? `<div class="article-full-image"><img src="${article.thumbnail}" alt="${article.alt || article.title}" onerror="this.parentElement.style.display='none'"></div>` : ""}
-                <div class="article-full-content">${htmlContent}</div>
-            </article>
-            <div class="article-navigation">
-                <a href="/" class="btn btn-secondary">← На главную</a>
-                <a href="/articles.html" class="btn btn-secondary">← Все статьи</a>
-            </div>
-        `;
-    } catch (error) {
-        showError("Не удалось загрузить статью: " + error.message);
-    }
-}
-formatDate(dateString) {
+function formatDate(dateString) {
     if (!dateString) return "";
     return new Date(dateString).toLocaleDateString("ru-RU", { year: "numeric", month: "long", day: "numeric" });
 }
@@ -274,7 +191,7 @@ function showError(message) {
 
 // Модальные окна
 function initModalButtons() {
-    var buttons = document.querySelectorAll("[href='#'], .btn-application");
+    var buttons = document.querySelectorAll("[href='#'], .btn-application, .btn-call");
     for (var i = 0; i < buttons.length; i++) {
         buttons[i].addEventListener("click", function(e) {
             e.preventDefault();

@@ -218,19 +218,7 @@
     </div>
 
   
-    <div id="applicationModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <h3>Заявка на ремонт печи</h3>
-            <p style="margin:15px 0;">Для отправки заявки позвоните или напишите нам:</p>
-            <p><strong>📞 +7 (960) 218-84-00</strong></p>
-            <p><strong>✉️ klinika-pechey@mail.ru</strong></p>
-            <p style="font-size:14px;color:#666;margin-top:20px;">
-                Мы свяжемся с вами в течение 2 рабочих дней.
-            </p>
-            <div style="text-align:center;margin-top:20px;">
-                <button class="btn btn-secondary" onclick="closeApplicationModal()">Закрыть</button>
-            </div>
+    
         </div>
     </div>
  -->
@@ -238,6 +226,52 @@
 
 
 
+
+    <!-- Модальное окно заявки -->
+    <div id="applicationModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>Заявка на ремонт печи</h3>
+            <form id="applicationForm" onsubmit="return submitApplication(this)">
+                <div class="form-group">
+                    <label>Введите Ваше имя: *</label>
+                    <input type="text" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Укажите адрес, где необходим ремонт: *</label>
+                    <input type="text" name="address" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Опишите текущую проблему: *</label>
+                    <textarea name="problem" rows="4" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Приложите фото печи и/или проблемы:</label>
+                    <div class="file-upload-container">
+                        <input type="file" name="photoFile" id="photoUpload" accept="image/*">
+                        <div id="photoPreview" class="photo-preview"></div>
+                    </div>
+                    <small style="display:block;margin-top:8px;font-size:12px;color:#666;">
+                        Или вставьте ссылку: 
+                        <input type="url" name="photoUrl" placeholder="https://..." style="width:100%;margin-top:5px;padding:8px;border:1px solid #ddd;border-radius:4px;">
+                    </small>
+                </div>
+                
+                <div class="form-group">
+                    <label>Ваши контактные данные: *</label>
+                    <input type="text" name="contacts" placeholder="Телефон или email" required>
+                </div>
+                
+                <div id="formMessage" style="margin:15px 0;min-height:24px;text-align:center;"></div>
+                
+                <button type="submit" class="btn btn-primary btn-block">Отправить заявку</button>
+                <p class="form-note">Мы свяжемся с Вами в течение двух рабочих дней</p>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
 
