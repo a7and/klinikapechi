@@ -1,51 +1,6 @@
 /**
- * Скрипт с правильными путями для работы в подпапке /klinikapechi/
+ * Универсальный скрипт — работает и в корне, и в подпапке
  */
-
-// Определяем базовый путь
-const getBasePath = () => {
-    // Если на сервере в папке /klinikapechi/
-    if (window.location.pathname.includes('/klinikapechi/')) {
-        return '/klinikapechi';
-    }
-    // Если на локальном сервере
-    if (window.location.hostname === 'klinikapechi') {
-        return '';
-    }
-    // Если на GitHub Pages
-    if (window.location.hostname === 'a7and.github.io') {
-        return '/klinikapechi';
-    }
-    return '';
-};
-
-const basePath = getBasePath();
-console.log('Базовый путь:', basePath);
-
-// ГЛОБАЛЬНЫЕ ФУНКЦИИ
-function openApplicationModal() {
-    var modal = document.getElementById('applicationModal');
-    if (modal) {
-        modal.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-    }
-}
-
-function closeApplicationModal() {
-    var modal = document.getElementById('applicationModal');
-    if (modal) {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-        var form = document.getElementById('applicationForm');
-        if (form) form.reset();
-    }
-}
-
-function submitApplication(form) {
-    alert('Заявка отправлена! Скоро свяжемся с вами по телефону +7 (960) 218-84-00');
-    closeApplicationModal();
-    return false;
-}
 
 // Вспомогательные функции
 function escapeHtml(text) {
@@ -62,9 +17,9 @@ function formatDate(dateStr) {
     return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear() + ' г.';
 }
 
-// Загрузка статей
+// Загрузка статей (относительный путь)
 function loadArticlesList() {
-    return fetch(basePath + '/articles_list.json')
+    return fetch('articles_list.json')
         .then(function(response) {
             if (!response.ok) throw new Error('Ошибка загрузки');
             return response.json();
@@ -89,7 +44,7 @@ function displayLatestArticles() {
         var a = window.articlesData[i];
         html += `
             <article class="article-card">
-                <a href="${basePath}/article/${a.folder}/" class="article-link">
+                <a href="article/${a.folder}/" class="article-link">
                     ${a.thumbnail ? '<div class="article-image-wrapper"><img src="' + a.thumbnail + '" alt="' + (a.alt || a.title) + '" class="article-image"></div>' : ''}
                     <div class="article-info">
                         <h3 class="article-title">${escapeHtml(a.title)}</h3>
@@ -109,13 +64,13 @@ function displayAllArticles() {
     var container = document.getElementById('articles-container');
     if (!container || !window.articlesData || window.articlesData.length === 0) return;
     
-    var html = '<div class="articles-header"><h2>Все статьи (' + window.articlesData.length + ')</h2><a href="' + basePath + '/" class="btn btn-secondary">← На главную</a></div><div class="articles-list">';
+    var html = '<div class="articles-header"><h2>Все статьи (' + window.articlesData.length + ')</h2><a href="./" class="btn btn-secondary">← На главную</a></div><div class="articles-list">';
     
     for (var i = 0; i < window.articlesData.length; i++) {
         var a = window.articlesData[i];
         html += `
             <div class="article-item">
-                <a href="${basePath}/article/${a.folder}/" class="article-item-link">
+                <a href="article/${a.folder}/" class="article-item-link">
                     <div class="article-item-content">
                         <h3>${escapeHtml(a.title)}</h3>
                         <div class="article-item-meta">
@@ -171,8 +126,8 @@ function displayArticle() {
         return;
     }
     
-    // Загружаем контент
-    fetch(basePath + '/articles/' + path + '/content.html')
+    // Загружаем контент (относительный путь)
+    fetch('articles/' + path + '/content.html')
         .then(function(response) {
             if (!response.ok) throw new Error('Ошибка загрузки контента');
             return response.text();
@@ -192,8 +147,8 @@ function displayArticle() {
                     <div class="article-full-content">${html}</div>
                 </article>
                 <div class="article-navigation">
-                    <a href="${basePath}/" class="btn btn-secondary">← На главную</a>
-                    <a href="${basePath}/articles.html" class="btn btn-secondary">Все статьи</a>
+                    <a href="./" class="btn btn-secondary">← На главную</a>
+                    <a href="articles.html" class="btn btn-secondary">Все статьи</a>
                 </div>
             `;
         })
@@ -233,6 +188,31 @@ function initGalleryScroll() {
     container.addEventListener('touchstart', stop, { passive: true });
 }
 
+// ГЛОБАЛЬНЫЕ ФУНКЦИИ МОДАЛЬНОГО ОКНА
+function openApplicationModal() {
+    var modal = document.getElementById('applicationModal');
+    if (modal) {
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeApplicationModal() {
+    var modal = document.getElementById('applicationModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+        var form = document.getElementById('applicationForm');
+        if (form) form.reset();
+    }
+}
+
+function submitApplication(form) {
+    alert('Заявка отправлена! Скоро свяжемся с вами по телефону +7 (960) 218-84-00');
+    closeApplicationModal();
+    return false;
+}
+
 // Инициализация при загрузке
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Скрипт загружен. Путь:', window.location.pathname);
@@ -240,9 +220,10 @@ document.addEventListener('DOMContentLoaded', function() {
     loadArticlesList().then(function() {
         var path = window.location.pathname;
         
-        if (path.includes('/article/') && path !== basePath + '/articles.html') {
+        // Определяем, какая страница открыта
+        if (path.includes('/article/') && !path.endsWith('/articles.html')) {
             displayArticle();
-        } else if (path === basePath + '/articles.html') {
+        } else if (path.endsWith('/articles.html')) {
             displayAllArticles();
         } else {
             displayLatestArticles();
