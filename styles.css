@@ -1166,3 +1166,37 @@ body {
         font-size: 15px;
     }
 }
+/* СКРЫТИЕ РАЗДЕЛОВ ПРИ ОТКРЫТИИ СТАТЬИ */
+.article-page .gallery-section,
+.article-page .articles-section,
+.article-page #articles-container,
+.article-page .hero-section,
+.article-page .main-hero {
+    display: none !important;
+}
+
+.article-page #article-content {
+    display: block !important;
+    margin: 40px auto;
+    max-width: 900px;
+    padding: 0 20px;
+}
+
+.article-page .article-full {
+    background: white;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.article-page .article-navigation {
+    margin-top: 30px;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.article-page .article-navigation .btn {
+    padding: 12px 30px;
+    font-size: 16px;
+}

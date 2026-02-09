@@ -1,29 +1,16 @@
-# Включаем режим перезаписи
-RewriteEngine On
+# Минимальный .htaccess для работы маршрутов /article/...
+# Безопасная версия — не вызывает ошибок 500
 
-# Базовая директория (если сайт в подпапке — раскомментируй и измени)
-# RewriteBase /klinikapechi/
-
-# Защита от прямого доступа к папкам
-Options -Indexes
-
-# Все запросы к несуществующим файлам перенаправляем на index.html
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.html [L]
-
-# Скрытие .html в URL
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME}\.html -f
-RewriteRule ^(.*)$ $1.html [L]
-
-# Кэширование статических ресурсов
-<IfModule mod_expires.c>
-    ExpiresActive On
-    ExpiresByType image/jpg "access plus 1 year"
-    ExpiresByType image/jpeg "access plus 1 year"
-    ExpiresByType image/gif "access plus 1 year"
-    ExpiresByType image/png "access plus 1 year"
-    ExpiresByType text/css "access plus 1 month"
-    ExpiresByType application/javascript "access plus 1 month"
+# Включаем режим перезаписи ТОЛЬКО если модуль доступен
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Не применять правила к существующим файлам
+    RewriteCond %{REQUEST_FILENAME} !-f
+    
+    # Все остальные запросы перенаправляем на index.html
+    RewriteRule ^ index.html [L]
 </IfModule>
+
+# Запрещаем листинг директорий
+Options -Indexes
