@@ -155,7 +155,107 @@ async function displayArticle() {
 }
 
 // Вспомогательные функции
-function formatDate(dateString) {
+
+
+async function displayArticle() {
+    const contentDiv = document.getElementById("article-content");
+    if (!contentDiv) return;
+    
+    const pathParts = window.location.pathname.split("/").filter(function(p) { return p; });
+    if (pathParts[0] !== "article" || pathParts.length < 3) {
+        showError("Статья не найдена");
+        return;
+    }
+    
+    const year = pathParts[1];
+    const articleFolder = pathParts[2];
+    const articlePath = year + "/" + articleFolder;
+    const article = articlesData.find(function(a) { return a.folder === articlePath; });
+    
+    if (!article) {
+        showError("Статья не найдена");
+        return;
+    }
+    
+    try {
+        const response = await fetch("/articles/" + articlePath + "/content.html");
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        const htmlContent = await response.text();
+        
+        document.title = article.title + " — Клиника Печей";
+        var metaDesc = document.querySelector("meta[name='description']");
+        if (metaDesc) metaDesc.setAttribute("content", article.description || (article.title + " — Клиника Печей"));
+        
+        contentDiv.innerHTML = `
+            <article class="article-full">
+                <h1 class="article-full-title">${escapeHtml(article.title)}</h1>
+                <div class="article-full-meta">
+                    ${article.date ? `<span class="article-full-date">${formatDate(article.date)}</span>` : ""}
+                    ${article.author ? `<span class="article-full-author">Автор: ${escapeHtml(article.author)}</span>` : ""}
+                    ${article.category ? `<span class="article-full-category">${escapeHtml(article.category)}</span>` : ""}
+                </div>
+                ${article.thumbnail ? `<div class="article-full-image"><img src="${article.thumbnail}" alt="${article.alt || article.title}" onerror="this.parentElement.style.display='none'"></div>` : ""}
+                <div class="article-full-content">${htmlContent}</div>
+            </article>
+            <div class="article-navigation">
+                <a href="/" class="btn btn-secondary">← На главную</a>
+                <a href="/articles.html" class="btn btn-secondary">← Все статьи</a>
+            </div>
+        `;
+    } catch (error) {
+        showError("Не удалось загрузить статью: " + error.message);
+    }
+}
+displayArticle() {
+    const contentDiv = document.getElementById("article-content");
+    if (!contentDiv) return;
+    
+    const pathParts = window.location.pathname.split("/").filter(function(p) { return p; });
+    if (pathParts[0] !== "article" || pathParts.length < 3) {
+        showError("Статья не найдена");
+        return;
+    }
+    
+    const year = pathParts[1];
+    const articleFolder = pathParts[2];
+    const articlePath = year + "/" + articleFolder;
+    const article = articlesData.find(function(a) { return a.folder === articlePath; });
+    
+    if (!article) {
+        showError("Статья не найдена");
+        return;
+    }
+    
+    try {
+        const response = await fetch("/articles/" + articlePath + "/content.html");
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        const htmlContent = await response.text();
+        
+        document.title = article.title + " — Клиника Печей";
+        var metaDesc = document.querySelector("meta[name='description']");
+        if (metaDesc) metaDesc.setAttribute("content", article.description || (article.title + " — Клиника Печей"));
+        
+        contentDiv.innerHTML = `
+            <article class="article-full">
+                <h1 class="article-full-title">${escapeHtml(article.title)}</h1>
+                <div class="article-full-meta">
+                    ${article.date ? `<span class="article-full-date">${formatDate(article.date)}</span>` : ""}
+                    ${article.author ? `<span class="article-full-author">Автор: ${escapeHtml(article.author)}</span>` : ""}
+                    ${article.category ? `<span class="article-full-category">${escapeHtml(article.category)}</span>` : ""}
+                </div>
+                ${article.thumbnail ? `<div class="article-full-image"><img src="${article.thumbnail}" alt="${article.alt || article.title}" onerror="this.parentElement.style.display='none'"></div>` : ""}
+                <div class="article-full-content">${htmlContent}</div>
+            </article>
+            <div class="article-navigation">
+                <a href="/" class="btn btn-secondary">← На главную</a>
+                <a href="/articles.html" class="btn btn-secondary">← Все статьи</a>
+            </div>
+        `;
+    } catch (error) {
+        showError("Не удалось загрузить статью: " + error.message);
+    }
+}
+formatDate(dateString) {
     if (!dateString) return "";
     return new Date(dateString).toLocaleDateString("ru-RU", { year: "numeric", month: "long", day: "numeric" });
 }
