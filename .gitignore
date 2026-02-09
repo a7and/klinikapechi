@@ -1,0 +1,13 @@
+﻿# OSPanel / локальный сервер
+/access_logs/
+/error_logs/
+/.idea/
+/.vscode/
+/node_modules/
+
+# Системные файлы
+Thumbs.db
+.DS_Store
+*.log
+*.tmp
+*~

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Истории ремонтов и полезные статьи | Клиника Печей</title>
+    <meta name="description" content="Реальные истории ремонта печей и полезные статьи о печном деле">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+    <script src="/script.js" defer></script>
+
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <!-- Шапка сайта -->
+        <!-- Шапка сайта -->
+        <!-- Шапка сайта -->
+    <header class="header">
+    
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>Клиника Печей</h1>
+                    <p>Диагностика и ремонт печных систем</p>
+                </div>
+                <nav class="main-nav">
+                    <a href="/" class="nav-link">Главная</a>
+                    <a href="/about.html" class="nav-link">О нас</a>
+                    <a href="/services.html" class="nav-link">Услуги</a>
+                    <a href="/articles.html" class="nav-link active">Статьи</a>
+                    <a href="/contacts.html" class="nav-link">Контакты</a>
+                    <a href="#" class="btn btn-primary btn-call" onclick="openApplicationModal(); return false;">Вызвать мастера</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Секция статей -->
+    <section class="articles-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Истории ремонтов и полезные статьи</h2>
+                <p class="section-subtitle">Реальные истории из практики печника с 30-летним стажем</p>
+            </div>
+            
+            <div id="articles-container" class="articles-grid">
+                <div class="loading">Загрузка статей...</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Футер -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h3>Клиника Печей</h3>
+                    <p>Ремонт печей по РФ.<br>Инженерный подход.<br>Без сноса.</p>
+                </div>
+                
+                <div class="footer-contacts">
+                    <h4>Контакты</h4>
+                    <p><a href="tel:+79602188400" class="phone-link">+7 (960) 218-84-00</a></p>
+                    <p><a href="mailto:klinika-pechey@mail.ru">klinika-pechey@mail.ru</a></p>
+                    <p>Работаем по СЗФО и ЦФО</p>
+                </div>
+                
+                <div class="footer-worktime">
+                    <h4>График работы</h4>
+                    <p>Вс-Чт: 9:00 до 20:00</p>
+                    <p>Пт: 9:00 до 16:00</p>
+                    <p>Сб: Выходной</p>
+                </div>
+                
+                <div class="footer-social">
+                    <h4>Соц.сети</h4>
+                    <a href="#" class="social-link">VK</a>
+                    <a href="#" class="social-link">Telegram</a>
+                    <a href="#" class="social-link">Авито</a>
+                    <a href="#" class="social-link">Юла</a>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="footer-nav">
+                    <a href="/">Главная</a>
+                    <a href="/services.html">Услуги</a>
+                    <a href="/articles.html">Блог</a>
+                </div>
+                <p>© 2025 Андрей Захарченко. Клиника Печей. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Модальное окно заявки -->
+    
+    <!-- Модальное окно заявки -->
+    
+    <!-- Модальное окно заявки -->
+    
+
+    <!-- Модальное окно заявки -->
+    
+
+    <!-- Модальное окно заявки -->
+    <div id="applicationModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>Заявка на ремонт печи</h3>
+            <form id="applicationForm" onsubmit="return submitApplication(this)">
+                <div class="form-group">
+                    <label>Введите Ваше имя: *</label>
+                    <input type="text" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Укажите адрес, где необходим ремонт: *</label>
+                    <input type="text" name="address" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Опишите текущую проблему: *</label>
+                    <textarea name="problem" rows="4" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Приложите фото печи и/или проблемы:</label>
+                    <div class="file-upload-container">
+                        <input type="file" name="photoFile" id="photoUpload" accept="image/*">
+                        <div id="photoPreview" class="photo-preview"></div>
+                    </div>
+                    <small style="display:block;margin-top:8px;font-size:12px;color:#666;">
+                        Или вставьте ссылку на изображение:
+                        <input type="url" name="photoUrl" placeholder="https://..." style="width:100%;margin-top:5px;padding:8px;border:1px solid #ddd;border-radius:4px;">
+                    </small>
+                </div>
+                
+                <div class="form-group">
+                    <label>Ваши контактные данные: *</label>
+                    <input type="text" name="contacts" placeholder="Телефон или email" required>
+                </div>
+                
+                <div id="formMessage" style="margin:15px 0;min-height:24px;text-align:center;"></div>
+                
+                <button type="submit" class="btn btn-primary btn-block">Отправить заявку</button>
+                <p class="form-note" style="font-size:13px;color:#666;margin-top:10px;text-align:center;">
+                    Мы свяжемся с Вами в течение двух рабочих дней
+                </p>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+

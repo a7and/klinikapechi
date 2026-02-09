@@ -1,0 +1,71 @@
+﻿========================================
+ИНСТРУКЦИЯ ПО НАСТРОЙКЕ GOOGLE APPS SCRIPT
+========================================
+
+1. ЗАЙДИ В GOOGLE SHEETS
+   - Создай новую таблицу
+   - Назови её "Заявки Клиника Печей"
+   - Создай заголовки в первой строке:
+     А1: Время
+     B1: Имя
+     C1: Адрес
+     D1: Проблема
+     E1: Фото URL
+     F1: Контакты
+     G1: Страница
+
+2. ОТКРОЙ РЕДАКТОР SCRIPTS
+   - В таблице: Расширения → Apps Script
+   - Удали весь код и вставь этот:
+
+========================================
+КОД ДЛЯ GOOGLE APPS SCRIPT:
+========================================
+
+function doPost(e) {
+  try {
+    // Получаем данные из запроса
+    var data = JSON.parse(e.postData.contents);
+    
+    // Получаем активную таблицу
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    
+    // Добавляем новую строку
+    sheet.appendRow([
+      new Date(),
+      data.name || '',
+      data.address || '',
+      data.problem || '',
+      data.photoUrl || '',
+      data.contacts || '',
+      data.page || ''
+    ]);
+    
+    // Возвращаем успешный ответ
+    return ContentService.createTextOutput(JSON.stringify({
+      status: 'success',
+      message: 'Заявка получена'
+    })).setMimeType(ContentService.MimeType.JSON);
+    
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({
+      status: 'error',
+      message: error.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+========================================
+3. НАСТРОЙКА ДОСТУПА:
+   - Нажми "Развернуть" → "Новое развертывание"
+   - Выбери тип: "Веб-приложение"
+   - Кто имеет доступ: "Любой, даже анонимный"
+   - Нажми "Развернуть"
+   - Скопируй URL (начинается с "https://script.google.com/macros/s/...")
+
+4. ОБНОВИ SCRIPT.JS:
+   - Замени YOUR_SCRIPT_ID на реальный ID из скопированного URL
+   - Пример: https://script.google.com/macros/s/ABC123xyz/exec
+   - ID: ABC123xyz
+
+========================================
